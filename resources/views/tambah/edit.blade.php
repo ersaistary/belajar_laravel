@@ -9,14 +9,15 @@
     <h1>{{$tittle ?? ''}}</h1>
     <a href="{{ url()->previous() }}">kembali</a>
 
-    <form action="{{route('tambah-action')}}" method="post">
+    <form action="{{route('update.tambahan', $count->id)}}" method="post">
         @csrf
+        @method('PUT')
         <input type="hidden" name="jenis" value="tambah">
         <label for="">angka1</label>
-        <input type="text" placeholder="Masukkan angka ke-1" name="angka1">
+        <input type="text" placeholder="Masukkan angka ke-1" name="angka1" value="{{ $count->angka1 }}">
         <br>
         <label for="">angka2</label>
-        <input type="text" placeholder="Masukkan angka ke-2" name="angka2">
+        <input type="text" placeholder="Masukkan angka ke-2" name="angka2" value="{{ $count->angka2 }}">
         <br>
         <button type="submit">Simpan</button>
     </form>

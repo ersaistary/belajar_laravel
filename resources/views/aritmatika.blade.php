@@ -8,7 +8,7 @@
 <body>
     <h1>Kalkulator sederhana</h1>
     <a href="{{route('tambah')}}">Tambah</a>
-    <a href="">Kurang</a>
+    <a href="{{route('kurang')}}">Kurang</a>
     <a href="">Bagi</a>
     <a href="">Kali</a>
 </body>

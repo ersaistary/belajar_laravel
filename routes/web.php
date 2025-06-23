@@ -16,4 +16,12 @@ Route::get('belajar', [App\Http\Controllers\BelajarController::class, 'index']);
 Route::get('update/{name}', [App\Http\Controllers\BelajarController::class, 'update']);
 Route::get('tambah', [App\Http\Controllers\BelajarController::class, 'tambah'])->name('tambah');
 Route::post('tambah-action', [App\Http\Controllers\BelajarController::class, 'tambahAction'])->name('tambah-action');
+Route::get('kurang', [App\Http\Controllers\BelajarController::class, 'kurang'])->name('kurang');
+Route::post('kurang-action', [App\Http\Controllers\BelajarController::class, 'kurangAction'])->name('kurang-action');
+
+Route::get('data/hitungan', [App\Http\Controllers\BelajarController::class, 'viewHitungan'])->name('data.hitungan');
+Route::get('data/data-hitung/{id}', [App\Http\Controllers\BelajarController::class, 'editDataHitung'])->name('edit.data-hitung');
+Route::put ('update/tambahan/{id}', [App\Http\Controllers\BelajarController::class, 'updateTambahan'])->name('update.tambahan');
+Route::delete('softDelete/data-hitung/{id}', [App\Http\Controllers\BelajarController::class, 'softDeleteTambahan'])->name('softDelete.data-hitung');
+
 
