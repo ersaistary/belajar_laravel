@@ -2,10 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
+Route::get('/', [App\Http\Controllers\LoginController::class, 'login']);
+Route::get('login', [App\Http\Controllers\LoginController::class, 'login'])->name('login');
+Route::post('actionLogin', [App\Http\Controllers\LoginController::class, 'actionLogin'])->name('actionLogin');
+Route::get('logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('dashboard', App\Http\Controllers\DashboardController::class);
+    Route::get('service', [App\Http\Controllers\DashboardController::class, 'indexService']);
+    Route::get('insert/service', [App\Http\Controllers\DashboardController::class, 'showInsService']);
+});
 
 // get: hanya bisa melihat
 // post: tambah dan update data (form)
