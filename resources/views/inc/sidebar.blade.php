@@ -16,10 +16,23 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{ url('service') }}">
+            <a href="{{ route('service.index') }}">
               <i class="bi bi-circle"></i><span>Services</span>
             </a>
           </li>
+
+          <li>
+            <a href="{{ route('level.index') }}">
+              <i class="bi bi-circle"></i><span>Level</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{{ route('customer.index') }}">
+              <i class="bi bi-circle"></i><span>Customer</span>
+            </a>
+          </li>
+
           <li>
             <a href="components-accordion.html">
               <i class="bi bi-circle"></i><span>Accordion</span>

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Components / Accordion - NiceAdmin Bootstrap Template</title>
+  <title>{{ $tittle ?? '' }}</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -18,7 +18,7 @@
 
     {{-- sidebar --}}
     @include('inc.sidebar')
-  
+
 
   <main id="main" class="main">
 
@@ -37,7 +37,7 @@
     <div class="content">
         @yield('content')
     </div>
-    
+
 
   </main><!-- End #main -->
 
