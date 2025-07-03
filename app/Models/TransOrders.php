@@ -12,8 +12,13 @@ class TransOrders extends Model
         'status',
         'order_code',
         'order_pay',
-        'order_change'
+        'order_change',
+        'total'
     ];
+
+    public function details(){
+        return $this->hasMany(TransDetails::class, 'id_trans');
+    }
 
     public function customer(){
         return $this->belongsTo(Customers::class, 'id_customer', 'id');

@@ -57,6 +57,8 @@
     const grandTotal = document.getElementById('grandTotal'); // untuk mengambil input grand total
     const grandTotalInput = document.getElementById('grandTotalInput'); // untuk mengambil input grand total
 
+
+
     let no = 1; // untuk nomor urut
     button.addEventListener('click', function() {
         // alert ('Tombol Add Row Diklik');
@@ -74,7 +76,7 @@
         `<td>${no}</td>
         <td> <input type='hidden' name='id_service[]' class='id_products' value='${productValue}'>${productName}</td>
         <td>
-            <input type='number' name='qty[]' value='1' class='form-control qtys'>
+            <input type='number' name='qty[]' value='1' class='form-control qtys' step='any'>
             <input type='hidden' class="priceInput" name='price[]' value='${productPrice}'>
         </td>
         <td> <input type='hidden' name='total[]' class='totals' value='${productPrice}'><span class='totalText'>${productPrice}</span></td>
@@ -121,15 +123,86 @@
     tbody.addEventListener('input', function(e) {
         if (e.target.classList.contains('qtys')) {
             const row = e.target.closest('tr'); // mengambil baris terdekat
-            const qty = parseInt(e.target.value) || 0; // mengambil nilai qty
+            const qty = parseFloat(e.target.value) || 0; // mengambil nilai qty
             const price = parseInt(row.querySelector('.priceInput').value) || 0; // mengambil harga produk
             row.querySelector('.totalText').textContent = qty * price; // print total di elemen span
             row.querySelector('.totals').value = qty * price; // update nilai total di input hidden
             updateGrandTotal(); // update grand total
         }
     });
+
 </script>
 
+<script>
+    const orderPay = document.getElementById('order_pay');
+    const orderChange = document.getElementById('order_change');
+    const orderChangeDisplay = document.getElementById('order_change_display');
+    const totalInput = document.getElementById('totalInput');
+
+    function updateOrderChange(){
+        const pay = parseInt(orderPay.value) || 0;
+        const total = parseInt(totalInput.value) || 0;
+        const change = pay - total;
+        orderChangeDisplay.value = change.toLocaleString('id-ID');
+        orderChange.value = change;
+    }
+
+    orderPay.addEventListener('input', updateOrderChange);
+</script>
+
+<script type="text/javascript"
+    src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
+</script>
+
+<script>
+    document.getElementById('paymentForm').addEventListener('submit', function(e){
+        e.preventDefault();
+
+        const form=e.target;
+        const method = form.querySelector('[name="payment_method"]:checked, [name="payment_method"]:focus') ?.value;
+
+        const data = {
+            order_pay: document.getElementById('order_pay').value,
+            order_change: document.getElementById('order_change').value,
+            payment_method: method,
+            _token: '{{ csrf_token() }}'
+        }
+
+        const orderId = form.dataset.orderId;
+
+        if(method === 'cash'){
+            form.submit();
+        }else{
+            fetch(`/trans/${orderId}/snap`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': data._token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.token){
+                    snap.pay(res.token, {
+                        onSuccess: function(result){
+                            window.location.href = 'trans';
+                        },
+                        onPending: function(result) {
+                            alert("Silakan selesaikan pembayaran.");
+                        },
+                        onError: function(result) {
+                            alert("Pembayaran gagal.");
+                        }
+                    });
+                }else{
+                    alert("Gagal ambil token pembayaran.");
+                }
+            });
+        }
+    });
+</script>
 </body>
 
 </html>

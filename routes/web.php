@@ -13,12 +13,14 @@ Route::get('logout', [App\Http\Controllers\LoginController::class, 'logout'])->n
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('dashboard', App\Http\Controllers\DashboardController::class);
-    //Route::get('service', [App\Http\Controllers\DashboardController::class, 'indexService']);
     Route::resource('level', App\Http\Controllers\LevelController::class);
     Route::resource('service', App\Http\Controllers\ServiceController::class);
     Route::resource('customer', App\Http\Controllers\CustomerController::class);
     Route::resource('user', App\Http\Controllers\UserController::class);
     Route::resource('trans', App\Http\Controllers\TransOrderController::class);
+    Route::get('print_invoice/{id}', [App\Http\Controllers\TransOrderController::class, 'printInvoice'])->name('print_invoice');
+
+    Route::post('trans/{id}/snap', [App\Http\Controllers\TransOrderController::class, 'snap'])->name('trans.snap');
 });
 
 // get: hanya bisa melihat

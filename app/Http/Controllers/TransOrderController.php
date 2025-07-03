@@ -8,9 +8,18 @@ use App\Models\TransOrders;
 use App\Models\TransDetails;
 use App\Models\Customers;
 use App\Models\TypeOfServices;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class TransOrderController extends Controller
 {
+    public function __construct()
+    {
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -47,18 +56,20 @@ class TransOrderController extends Controller
             'id_customer' => $request->id_customer,
             'order_code' => $request->order_code,
             'order_end_date' => $request->order_end_date,
-            'total' => $request->grand_total
+            'total' => $request->grandTotal
         ]);
 
         foreach($request->id_service as $key => $data){
             $idTrans = $transOrder->id;
+            $qtyConvert = floatval($request->qty[$key]) * 1000; // Convert kg to grams
             TransDetails::create([
-                'id_trans'=> $idTrans,
-                'id_service'=> $request->id_service[$key],
-                'qty'=> $request->qty[$key],
-                'subtotal' => $request->total[$key]
+                'id_trans'   => $idTrans,
+                'id_service' => $data,
+                'qty'        => $qtyConvert,
+                'subtotal'   => $request->total[$key]
             ]);
         }
+
 
         return redirect()->to('trans');
     }
@@ -68,7 +79,23 @@ class TransOrderController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $tittle = "Transaction Detail";
+        $details = TransOrders::with(['customer', 'details.service'])->where('id', $id)->first();
+        $params = [
+            'transaction_details' => [
+                'order_id' => rand(),
+                'gross_amount' => 10.000,
+            ],
+            'customer_details' => [
+                'first_name' => "asdfs",
+                'last_name' => "faefa",
+                'email' => "asda@gmail.com",
+                'phone' => "578458458",
+            ],
+        ];
+
+        // $snapToken = Snap::getSnapToken($params);
+        return view('trans.show', compact('tittle', 'details'));
     }
 
     /**
@@ -93,5 +120,29 @@ class TransOrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function printInvoice(string $id){
+        $details = TransOrders::with(['customer', 'details.service'])->where('id', $id)->first();
+        // return $details;
+        return view('trans.print', compact('details'));
+    }
+
+    public function snap(Request $request, $id){
+        $details = TransOrders::with(['details', 'customer'])->findOrFail($id);
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => rand(),
+                'gross_amount' => $details->total,
+            ],
+            'customer_details' => [
+                'first_name' => $details->customer->name ?? 'Umum',
+                'email' => $details->customer->email ?? 'dummy@gmail.com',
+            ],
+        ];
+
+        $snap = Snap::createTransaction($params);
+        return response()->json(['token'=>$snap->token]);
     }
 }

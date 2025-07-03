@@ -60,7 +60,7 @@
                         <p>
                             <strong>Grand Total : Rp <span id="grandTotal">0</span></strong>
                             <div class="mb-3">
-                                <input type="hidden" name="grand_total" id="grandTotalInput" value=0>
+                                <input type="hidden" name="grandTotal" id="grandTotalInput" value=0>
                             </div>
                         </p>
                     </div>
